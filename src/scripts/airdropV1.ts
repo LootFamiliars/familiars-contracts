@@ -1,7 +1,6 @@
 import { network } from 'hardhat'
 import { providers } from 'ethers'
 import { LootFamiliars__factory } from '../../src/gen/typechain'
-import {PassThrough as PassThroughStream} from 'node:stream';
 import * as fs from "fs";
 import ora from 'ora'
 

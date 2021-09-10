@@ -4,8 +4,6 @@ import chaiString from 'chai-string'
 import * as ethers from 'ethers'
 
 import BN = require('bn.js') // used by web3
-
-export * from './contract'
 export * from './helpers'
 
 const BigNumber = ethers.BigNumber
