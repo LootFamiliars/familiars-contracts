@@ -1,13 +1,14 @@
-import { network, run, config, tenderly } from 'hardhat'
+import { network } from 'hardhat'
 import * as _ from 'lodash'
 import ora from 'ora'
 
 import {
-  Example__factory,
-} from '../src/gen/typechain'
+  LootFamiliars__factory
+} from '../gen/typechain'
 
 import { UniversalDeployer } from '@0xsequence/deployer'
-import { ContractFactory, BigNumber, providers } from 'ethers'
+import { BigNumber, providers } from 'ethers'
+import { attempVerify, buildNetworkJson } from '../../utils/deployments'
 import fs from 'fs'
 
 const prompt = ora()
@@ -26,47 +27,24 @@ const txParams = {
     .mul(16)
 }
 
-const attempVerify = async <T extends ContractFactory>(name: string, _: new () => T, address: string, ...args: Parameters<T["deploy"]>) => {
-  try {
-    await run("verify:verify", {
-      address: address,
-      constructorArguments: args,
-    })
-  } catch {}
-
-  try {
-    await tenderly.verify({
-      name: name,
-      address: address,
-    })
-  } catch {}
-}
-
-const buildNetworkJson = (...contracts: { name: string, address: string }[]) => {
-  return contracts.map((c) => ({
-    contractName: c.name,
-    address: c.address
-  }))
-}
-
 const main = async () => {
   prompt.info(`Network Name:           ${network.name}`)
   prompt.info(`Local Deployer Address: ${await signer.getAddress()}`)
   prompt.info(`Local Deployer Balance: ${await signer.getBalance()}`)
 
   // Deploying contracts
-  const exampleContract = await universalDeployer.deploy('Example', Example__factory, txParams)
+  const lootFamiliars = await universalDeployer.deploy('LootFamiliars', LootFamiliars__factory, txParams)
 
   // Logger
   prompt.start(`writing deployment information to ${network.name}.json`)
   fs.writeFileSync(`./src/networks/${network.name}.json`, JSON.stringify(buildNetworkJson(
-    { name: "ExampleContract", address: exampleContract.address },
+    { name: "LootFamiliars", address: lootFamiliars.address },
   ), null, 2))
   prompt.succeed()
 
   // Verifying contracts via Tenderly
   prompt.start(`verifying contracts`)
-  await attempVerify("Factory", Example__factory, exampleContract.address)
+  await attempVerify("LootFamiliars", LootFamiliars__factory, lootFamiliars.address)
 
   prompt.succeed()
 }

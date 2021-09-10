@@ -1,2 +1,10 @@
 [
+  {
+    "contractName": "LootFamiliars",
+    "address": "0x6686461fd93399af5d08a9590f4fa87d734afb43"
+  },
+  {
+    "contractName": "LootFamiliarsV2",
+    "address": "0x00000"
+  }
 ]

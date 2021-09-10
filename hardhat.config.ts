@@ -1,5 +1,5 @@
 import { HardhatUserConfig } from 'hardhat/config'
-import { networkConfig } from './utils/config-loader'
+import { getEnvConfig, networkConfig } from './utils/config-loader'
 
 import '@nomiclabs/hardhat-truffle5'
 import '@nomiclabs/hardhat-ethers'
@@ -14,6 +14,8 @@ const ganacheNetwork = {
   url: 'http://127.0.0.1:8545',
   blockGasLimit: 6000000000
 }
+
+const envConfig = getEnvConfig('PROD')
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -32,6 +34,7 @@ const config: HardhatUserConfig = {
     root: 'src',
     tests: '../tests'
   },
+  //defaultNetwork: "ganache",
   networks: {
     mainnet: networkConfig('mainnet'),
     rinkeby: networkConfig('rinkeby'),
@@ -46,7 +49,7 @@ const config: HardhatUserConfig = {
     apiKey: networkConfig('mainnet').etherscan
   },
   mocha: {
-    timeout: process.env.COVERAGE ? 15 * 60 * 1000 : 30 * 1000
+    timeout: 150000
   },
   gasReporter: {
     enabled: !!process.env.REPORT_GAS === true,
@@ -55,8 +58,8 @@ const config: HardhatUserConfig = {
     showTimeSpent: true
   },
   tenderly: {
-    project: "project/name",
-    username: "username",
+    project: envConfig['TENDERLY_PROJECT_NAME'],
+    username: envConfig['TENDERLY_ACCOUNT_NAME'],
   }
 }
 

@@ -1,7 +1,9 @@
 {
   "name": "root",
   "private": true,
-  "workspaces": ["src"],
+  "workspaces": [
+    "src"
+  ],
   "license": "Apache-2.0",
   "scripts": {
     "build": "yarn clean && yarn compile && yarn adapter",
@@ -25,10 +27,11 @@
     "start:ganache": "ganache-cli --chainId ${npm_package_config_ganacheChainID} --networkId ${npm_package_config_ganacheChainID} --port ${npm_package_config_ganachePort} --gasLimit ${npm_package_config_ganacheGasLimit} --gasPrice ${npm_package_config_ganacheGasPrice} --defaultBalanceEther ${npm_package_config_etherBalance} --deterministic --mnemonic \"${npm_package_config_mnemonic}\" ${npm_package_config_extra}",
     "start:ganache:verbose": "yarn run start:ganache --verbose",
     "stop:ganache": "ps aux | grep ganache-cli | grep -v grep | awk '{print $2}' | xargs kill -9",
-    "deploy:ganache": "hardhat run --network ganache utils/deploy-contracts.ts",
-    "deploy": "hardhat run utils/deploy-contracts.ts --network",
+    "deploy:ganache": "hardhat run --network ganache src/scripts/deploy-contracts.ts",
+    "deploy": "hardhat run src/scripts/deploy-contracts.ts --network",
     "verify": "hardhat verify --network",
-    "release": "yarn publish src"
+    "release": "yarn publish src",
+    "airdrop": "ts-node ./src/scripts/airdropV1.ts"
   },
   "husky": {
     "hooks": {
@@ -60,7 +63,7 @@
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-prettier": "^3.3.1",
-    "ethers": "^5.0.32",
+    "ethers": "^5.4.6",
     "ganache-cli": "6.12.2",
     "hardhat": "2.1.1",
     "hardhat-gas-reporter": "1.0.4",
