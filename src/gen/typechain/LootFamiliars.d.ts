@@ -30,6 +30,7 @@ interface LootFamiliarsInterface extends ethers.utils.Interface {
     "flipSaleState()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
+    "isClaimable(uint256)": FunctionFragment;
     "lootExpansionTokenUritokenURI(uint256)": FunctionFragment;
     "mint(uint256)": FunctionFragment;
     "multiMint(uint256[])": FunctionFragment;
@@ -79,6 +80,10 @@ interface LootFamiliarsInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isClaimable",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "lootExpansionTokenUritokenURI",
@@ -172,6 +177,10 @@ interface LootFamiliarsInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isClaimable",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -298,12 +307,12 @@ export class LootFamiliars extends Contract {
     "V1_FAMILIAR_ADDRESS()"(overrides?: CallOverrides): Promise<[string]>;
 
     airdropWithV1Familiars(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "airdropWithV1Familiars(uint256[])"(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -360,6 +369,16 @@ export class LootFamiliars extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    isClaimable(
+      familiarId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { claimable: boolean }>;
+
+    "isClaimable(uint256)"(
+      familiarId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { claimable: boolean }>;
+
     lootExpansionTokenUritokenURI(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -371,22 +390,22 @@ export class LootFamiliars extends Contract {
     ): Promise<[string]>;
 
     mint(
-      lootId: BigNumberish,
+      familiarId: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "mint(uint256)"(
-      lootId: BigNumberish,
+      familiarId: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     multiMint(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "multiMint(uint256[])"(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -559,12 +578,12 @@ export class LootFamiliars extends Contract {
   "V1_FAMILIAR_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
 
   airdropWithV1Familiars(
-    lootIds: BigNumberish[],
+    familiarIds: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "airdropWithV1Familiars(uint256[])"(
-    lootIds: BigNumberish[],
+    familiarIds: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -621,6 +640,16 @@ export class LootFamiliars extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  isClaimable(
+    familiarId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "isClaimable(uint256)"(
+    familiarId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   lootExpansionTokenUritokenURI(
     tokenId: BigNumberish,
     overrides?: CallOverrides
@@ -632,22 +661,22 @@ export class LootFamiliars extends Contract {
   ): Promise<string>;
 
   mint(
-    lootId: BigNumberish,
+    familiarId: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "mint(uint256)"(
-    lootId: BigNumberish,
+    familiarId: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   multiMint(
-    lootIds: BigNumberish[],
+    familiarIds: BigNumberish[],
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "multiMint(uint256[])"(
-    lootIds: BigNumberish[],
+    familiarIds: BigNumberish[],
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -814,12 +843,12 @@ export class LootFamiliars extends Contract {
     "V1_FAMILIAR_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
 
     airdropWithV1Familiars(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     "airdropWithV1Familiars(uint256[])"(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -872,6 +901,16 @@ export class LootFamiliars extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    isClaimable(
+      familiarId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "isClaimable(uint256)"(
+      familiarId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     lootExpansionTokenUritokenURI(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -882,20 +921,20 @@ export class LootFamiliars extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    mint(lootId: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    mint(familiarId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     "mint(uint256)"(
-      lootId: BigNumberish,
+      familiarId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     multiMint(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     "multiMint(uint256[])"(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1089,12 +1128,12 @@ export class LootFamiliars extends Contract {
     "V1_FAMILIAR_ADDRESS()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     airdropWithV1Familiars(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "airdropWithV1Familiars(uint256[])"(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1151,6 +1190,16 @@ export class LootFamiliars extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    isClaimable(
+      familiarId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "isClaimable(uint256)"(
+      familiarId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     lootExpansionTokenUritokenURI(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -1162,22 +1211,22 @@ export class LootFamiliars extends Contract {
     ): Promise<BigNumber>;
 
     mint(
-      lootId: BigNumberish,
+      familiarId: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "mint(uint256)"(
-      lootId: BigNumberish,
+      familiarId: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     multiMint(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "multiMint(uint256[])"(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1355,12 +1404,12 @@ export class LootFamiliars extends Contract {
     ): Promise<PopulatedTransaction>;
 
     airdropWithV1Familiars(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "airdropWithV1Familiars(uint256[])"(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1420,6 +1469,16 @@ export class LootFamiliars extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    isClaimable(
+      familiarId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "isClaimable(uint256)"(
+      familiarId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     lootExpansionTokenUritokenURI(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -1431,22 +1490,22 @@ export class LootFamiliars extends Contract {
     ): Promise<PopulatedTransaction>;
 
     mint(
-      lootId: BigNumberish,
+      familiarId: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "mint(uint256)"(
-      lootId: BigNumberish,
+      familiarId: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     multiMint(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "multiMint(uint256[])"(
-      lootIds: BigNumberish[],
+      familiarIds: BigNumberish[],
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

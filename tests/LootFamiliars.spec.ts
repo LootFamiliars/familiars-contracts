@@ -37,6 +37,30 @@ contract('LootFamiliars', () => {
     await familiarV1.testMint(v1_ids, v1_owners)
   })
 
+  describe('familiarV2.isClaimable()', () => {
+    it(`should return true if familiar has not been claimed yet`, async () => {
+      UNMINTED_IDS.forEach(async (id) => {
+        const isClaimable = await familiarV2.isClaimable(id)
+        expect(isClaimable).to.be.true
+      })
+    })
+
+    it(`should return false if familiar has been claimed`, async () => {
+      UNMINTED_IDS.forEach(async (id) => {
+        await familiarV2.mint(id, {value: MINT_COST})
+        const isClaimable = await familiarV2.isClaimable(id)
+        expect(isClaimable).to.be.false
+      })
+    })
+
+    it(`should return false if familiar is reserved for V1 familiar`, async () => {
+      v1_ids.forEach(async (id) => {
+        const isClaimable = await familiarV2.isClaimable(id)
+        expect(isClaimable).to.be.false
+      })
+    })
+  })
+
   describe('familiarV2.mint()', () => {
     it(`Should throw if not mint ID is out of range`, async () => {
       const tx = familiarV2.mint(8001, {value: MINT_COST})
