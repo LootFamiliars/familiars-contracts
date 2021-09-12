@@ -11,7 +11,7 @@ const FamiliarsV1Artifact = artifacts.require('LootFamiliarsV1')
 const FamiliarsArtifact = artifacts.require('LootFamiliars')
 
 // Constants to use
-const UNMINTED_IDS = [1, 666, 6666, 6237, 4826, 1111, 8000, 777]
+const UNMINTED_IDS = [1, 23, 77, 86, 666, 6666, 6237, 4826, 1111, 8000, 777]
 const MINT_COST = ethers.utils.parseUnits("0.2", "ether")
 
 contract('LootFamiliars', () => {
@@ -57,6 +57,27 @@ contract('LootFamiliars', () => {
       v1_ids.forEach(async (id) => {
         const isClaimable = await familiarV2.isClaimable(id)
         expect(isClaimable).to.be.false
+      })
+    })
+  })
+
+  describe('familiarV2.findClaimable()', () => {
+    it(`should IDs that are not reserved`, async () => {
+      const claimables = await familiarV2.findClaimable(1, 2000)
+      claimables.forEach(id => {
+        expect(v1_ids.includes(id.toNumber())).to.be.false
+      })
+    })
+
+    it(`should return IDs that have not been minted on V2`, async () => {
+      const pre_claimables = await familiarV2.findClaimable(1, 2000)
+      await familiarV2.multiMint(UNMINTED_IDS, {value: MINT_COST.mul(UNMINTED_IDS.length)})
+      const post_claimables = await familiarV2.findClaimable(1, 2000)
+      const diff = pre_claimables.filter(id => id.toNumber() != 0).length - post_claimables.filter(id => id.toNumber() != 0).length
+      
+      expect(diff).to.be.eql(UNMINTED_IDS.filter(id => id < 2000).length)
+      post_claimables.forEach(id => {
+        expect(UNMINTED_IDS.includes(id.toNumber())).to.be.false
       })
     })
   })

@@ -1997,9 +1997,9 @@ contract LootFamiliars is ERC721, ReentrancyGuard, Ownable {
     }
     
     // Anyone can airdrop V1 familiars to their respective owner, which are reserved to them
-    function airdropWithV1Familiars(uint[] memory familiarIds) external nonReentrant {
+    function airdropWithV1Familiars(uint256[] memory familiarIds) external nonReentrant {
         require(saleIsActive, "Sale must be active to mint");
-        for (uint i=0; i<familiarIds.length; i++) {
+        for (uint256 i=0; i<familiarIds.length; i++) {
             require(!_exists(familiarIds[i]),"Familiar has already been minted");
             // note: ownerOf() will revert if non-existent
             address lootOwner = v1FamiliarContract.ownerOf(familiarIds[i]);
@@ -2008,20 +2008,20 @@ contract LootFamiliars is ERC721, ReentrancyGuard, Ownable {
     }
 
     //Public sale minting where all the revenue will be used to buy floor loots and fractionalize them
-    function mint(uint familiarId) external payable nonReentrant {
+    function mint(uint256 familiarId) external payable nonReentrant {
         require(publicPrice <= msg.value, "Ether amount sent is insufficient");
         _mint(familiarId);
     }
     
     //Public sale minting where all the revenue will be used to buy floor loots and fractionalize them
-    function multiMint(uint[] memory familiarIds) external payable nonReentrant {
+    function multiMint(uint256[] memory familiarIds) external payable nonReentrant {
         require((publicPrice * familiarIds.length) <= msg.value, "Ether amount sent is insufficient");
-        for (uint i=0; i<familiarIds.length; i++) {
+        for (uint256 i=0; i<familiarIds.length; i++) {
             _mint(familiarIds[i]);
         }
     }
 
-    function _mint(uint familiarId) private {
+    function _mint(uint256 familiarId) private {
       require(saleIsActive, "Sale must be active to mint");
       require(familiarId > 0 && familiarId < 8001, "Token ID invalid");
       require(!_exists(familiarId), "Familiar has already been minted");
@@ -2043,13 +2043,32 @@ contract LootFamiliars is ERC721, ReentrancyGuard, Ownable {
     }
 
     // Check if you can claim a given familiar
-    function isClaimable(uint familiarId) external view returns (bool claimable) {
-      try v1FamiliarContract.ownerOf(familiarId) {
+    function isClaimable(uint256 familiarId) public view returns (bool claimable) {
+      if (_exists(familiarId) ) {
+        // Familiar was already minted on V2
         return false;
-      } catch {
-        // If ownerOf() throws, then we know this familiar was not minted on V1
-        // Mint familiar to msg.sender since not reserved for V1 familiar
-        return !_exists(familiarId);
+      } else {
+        try v1FamiliarContract.ownerOf(familiarId) {
+          // If ownerOf() returns a valid value, this means familiar was minted on V1
+          return false;
+        } catch {
+          // If ownerOf() throws, then we know this familiar was not minted on V1 either
+          return true;
+        }
       }
+    }
+
+    // Will return ID of familiars that can still be claimed within the range of _startingID (inclusive) and _endID (exclusive)
+    function findClaimable(uint256 _startingID, uint256 _endID) external view returns (uint256[] memory) {
+      require(_startingID <= _endID, "Invalid range");
+      uint256 n_ids = _endID - _startingID;
+      uint256[] memory claimableIDs = new uint256[](n_ids);
+      for (uint256 i = 0; i < n_ids; i++) {
+        uint256 id = _startingID + i;
+        if (isClaimable(id)) {
+          claimableIDs[i] = id;
+        }
+      }
+      return claimableIDs;
     }
 }

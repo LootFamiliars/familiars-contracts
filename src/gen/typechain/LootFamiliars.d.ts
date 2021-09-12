@@ -27,6 +27,7 @@ interface LootFamiliarsInterface extends ethers.utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "baseURI()": FunctionFragment;
+    "findClaimable(uint256,uint256)": FunctionFragment;
     "flipSaleState()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
@@ -69,6 +70,10 @@ interface LootFamiliarsInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(functionFragment: "baseURI", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "findClaimable",
+    values: [BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "flipSaleState",
     values?: undefined
@@ -167,6 +172,10 @@ interface LootFamiliarsInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "baseURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "findClaimable",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "flipSaleState",
     data: BytesLike
@@ -338,6 +347,18 @@ export class LootFamiliars extends Contract {
     baseURI(overrides?: CallOverrides): Promise<[string]>;
 
     "baseURI()"(overrides?: CallOverrides): Promise<[string]>;
+
+    findClaimable(
+      _startingID: BigNumberish,
+      _endID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    "findClaimable(uint256,uint256)"(
+      _startingID: BigNumberish,
+      _endID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
 
     flipSaleState(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -610,6 +631,18 @@ export class LootFamiliars extends Contract {
 
   "baseURI()"(overrides?: CallOverrides): Promise<string>;
 
+  findClaimable(
+    _startingID: BigNumberish,
+    _endID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  "findClaimable(uint256,uint256)"(
+    _startingID: BigNumberish,
+    _endID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   flipSaleState(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -874,6 +907,18 @@ export class LootFamiliars extends Contract {
     baseURI(overrides?: CallOverrides): Promise<string>;
 
     "baseURI()"(overrides?: CallOverrides): Promise<string>;
+
+    findClaimable(
+      _startingID: BigNumberish,
+      _endID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    "findClaimable(uint256,uint256)"(
+      _startingID: BigNumberish,
+      _endID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     flipSaleState(overrides?: CallOverrides): Promise<void>;
 
@@ -1160,6 +1205,18 @@ export class LootFamiliars extends Contract {
 
     "baseURI()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    findClaimable(
+      _startingID: BigNumberish,
+      _endID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "findClaimable(uint256,uint256)"(
+      _startingID: BigNumberish,
+      _endID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     flipSaleState(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1438,6 +1495,18 @@ export class LootFamiliars extends Contract {
     baseURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "baseURI()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    findClaimable(
+      _startingID: BigNumberish,
+      _endID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "findClaimable(uint256,uint256)"(
+      _startingID: BigNumberish,
+      _endID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     flipSaleState(
       overrides?: Overrides & { from?: string | Promise<string> }
