@@ -744,7 +744,7 @@
     "lootID": 4573
   },
   {
-    "ownerAddress": "0x10FE160Dae09a8D2fcE9D19767f0E888237cDAe1",
+    "ownerAddress": "0x48Ff2baAC9C63CDb6BaD279Bc219C4530429d0FC",
     "lootID": 5577
   },
   {
@@ -1338,5 +1338,9 @@
   {
     "ownerAddress": "0xd046B3C521c0F5513C8A47eB3C2011684eA80B27",
     "lootID": 6506
+  },
+  {
+    "ownerAddress": "0x566f77Abf90A9d989105eDd726b4ca738e5b0519",
+    "lootID": 1237
   }
 ]
