@@ -2038,7 +2038,7 @@ contract LootFamiliars is ERC721, ReentrancyGuard, Ownable {
     }
 
     // To comply with future loot registry
-    function lootExpansionTokenUritokenURI(uint256 tokenId) public view returns (string memory) {
+    function lootExpansionTokenUri(uint256 tokenId) public view returns (string memory) {
       return tokenURI(tokenId);
     }
 

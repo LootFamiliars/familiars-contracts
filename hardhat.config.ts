@@ -34,7 +34,7 @@ const config: HardhatUserConfig = {
     root: 'src',
     tests: '../tests'
   },
-  //defaultNetwork: "ganache",
+  defaultNetwork: "rinkeby",
   networks: {
     mainnet: networkConfig('mainnet'),
     rinkeby: networkConfig('rinkeby'),
