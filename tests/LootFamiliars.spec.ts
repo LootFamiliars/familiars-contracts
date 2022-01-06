@@ -11,7 +11,7 @@ const FamiliarsV1Artifact = artifacts.require('LootFamiliarsV1')
 const FamiliarsArtifact = artifacts.require('LootFamiliars')
 
 // Constants to use
-const UNMINTED_IDS = [1, 23, 77, 86, 666, 6666, 6237, 4826, 1111, 8000, 777]
+const UNMINTED_IDS = [1, 23, 77, 86, 666]
 const MINT_COST = ethers.utils.parseUnits("0.2", "ether")
 
 contract('LootFamiliars', () => {
@@ -22,7 +22,7 @@ contract('LootFamiliars', () => {
   const v1_ids: number[] = []
   const v1_owners: string[] = []
   mintedV1Familiars.forEach( (familiar, idx) => {
-    if (idx < 75) {
+    if (idx < 5) {
       v1_ids.push(familiar.lootID)
       v1_owners.push(familiar.ownerAddress)
     }

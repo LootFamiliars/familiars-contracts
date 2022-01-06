@@ -341,14 +341,12 @@ contract FlootClaim is Ownable {
     using SafeMath for uint256;
 
     // Amount of FLOOT each familiar can claim
-    uint256 constant public FLOOT_PER_FAMILIAR = 20000000 * 10**18; // 20 million FLOOT per familiar
+    uint256 constant public FLOOT_PER_FAMILIAR = 10000 * 10**18; // 10k FLOOT per familiar
 
     // Familiar contracts
     address public immutable FAMILIAR_ADDRESS;
-    ERC721Interface immutable familiarContract;
-
-    address public immutable V1_FAMILIAR_ADDRESS;
-    ERC721Interface immutable v1FamiliarContract;
+    ERC721Interface immutable familiarContract;   // Real familiars
+    ERC721Interface immutable v1FamiliarContract; // V1 familiars
 
     // FLOOT contract
     address public immutable FLOOT_ADDRESS;
@@ -359,25 +357,23 @@ contract FlootClaim is Ownable {
     mapping (uint256 => bool) public allowedV1;
  
     // Store Familiar and FLOOT contracts
-    constructor(address _familiarAddress, address _v1FamiliarAddress, address _flootAddress) {
+    constructor(address _v1FamiliarAddress, address _familiarAddress,  address _flootAddress) {
       FAMILIAR_ADDRESS = _familiarAddress;
       familiarContract = ERC721Interface(_familiarAddress);
-
-      V1_FAMILIAR_ADDRESS = _v1FamiliarAddress;
       v1FamiliarContract = ERC721Interface(_v1FamiliarAddress);
 
       FLOOT_ADDRESS = _flootAddress;
       flootContract = ERC20Interface(_flootAddress);
     }
 
-    // Sets a V1 familiar as being eligible
+    // Sets a V2 familiar minted from V1 as being eligible
     function enableV1Claim(uint256[] calldata _ids) external onlyOwner {
       for (uint256 i = 0; i < _ids.length; i++) {
         allowedV1[_ids[i]] = true;
       }
     }
 
-    // Sets a V1 familiar as NOT eligible
+    // Sets a V2 familiar from V1 as NOT eligible
     function disableV1Claim(uint256[] calldata _ids) external onlyOwner {
       for (uint256 i = 0; i < _ids.length; i++) {
         allowedV1[_ids[i]] = false;
@@ -395,10 +391,9 @@ contract FlootClaim is Ownable {
         _claim(_ids[i]);
       }
     }
-
+  
     function _claim(uint256 _id) private {
-      require(!claimed[_id], "FLOOT has already been claimed for this familiar");
-      require(!isExcluded(_id), "Familiar is not eligible for FLOOT");
+      require(isClaimable(_id), "Familiar cannot claim FLOOT");
 
       // Transfer floot to familiar owner
       address familiarOwner = familiarContract.ownerOf(_id);
@@ -409,11 +404,11 @@ contract FlootClaim is Ownable {
 
     // Check if you can claim a given familiar
     function isClaimable(uint256 _id) public view returns (bool claimable) {
-      return claimed[_id] || isExcluded(_id) ? false : true;
+      return !claimed[_id] && isAllowed(_id) ? true : false;
     }
 
     // Check if a familiar is not eligible for claiming FLOOT
-    function isExcluded(uint256 _id) public view returns (bool isExcluded) {
+    function isAllowed(uint256 _id) public view returns (bool allowed) {
       // ID must be within valid range
       if (_id == 0 || _id > 8000) { return false; }
 
@@ -425,7 +420,7 @@ contract FlootClaim is Ownable {
         return true;
 
       } catch {
-        // V1 familiar does not exist, so it must be allowed
+        // V1 familiar does not exist, so familiar must be allowed
         return true;
       }
     }

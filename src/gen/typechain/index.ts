@@ -17,6 +17,10 @@ export type { LootFamiliars } from "./LootFamiliars";
 export type { LootFamiliarsV1 } from "./LootFamiliarsV1";
 export type { LootInterface } from "./LootInterface";
 export type { Migrations } from "./Migrations";
+export type { ERC20 } from "./ERC20";
+export type { ERC20Mock } from "./ERC20Mock";
+export type { ERC20TokenMock } from "./ERC20TokenMock";
+export type { IERC20 } from "./IERC20";
 
 export { ERC20Interface__factory } from "./factories/ERC20Interface__factory";
 export { ERC721Interface__factory } from "./factories/ERC721Interface__factory";
@@ -34,3 +38,7 @@ export { LootFamiliars__factory } from "./factories/LootFamiliars__factory";
 export { LootFamiliarsV1__factory } from "./factories/LootFamiliarsV1__factory";
 export { LootInterface__factory } from "./factories/LootInterface__factory";
 export { Migrations__factory } from "./factories/Migrations__factory";
+export { ERC20__factory } from "./factories/ERC20__factory";
+export { ERC20Mock__factory } from "./factories/ERC20Mock__factory";
+export { ERC20TokenMock__factory } from "./factories/ERC20TokenMock__factory";
+export { IERC20__factory } from "./factories/IERC20__factory";

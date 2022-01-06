@@ -24,14 +24,13 @@ interface FlootClaimInterface extends ethers.utils.Interface {
     "FAMILIAR_ADDRESS()": FunctionFragment;
     "FLOOT_ADDRESS()": FunctionFragment;
     "FLOOT_PER_FAMILIAR()": FunctionFragment;
-    "V1_FAMILIAR_ADDRESS()": FunctionFragment;
     "allowedV1(uint256)": FunctionFragment;
     "claim(uint256)": FunctionFragment;
     "claimed(uint256)": FunctionFragment;
     "disableV1Claim(uint256[])": FunctionFragment;
     "enableV1Claim(uint256[])": FunctionFragment;
+    "isAllowed(uint256)": FunctionFragment;
     "isClaimable(uint256)": FunctionFragment;
-    "isExcluded(uint256)": FunctionFragment;
     "multiClaim(uint256[])": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -48,10 +47,6 @@ interface FlootClaimInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "FLOOT_PER_FAMILIAR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "V1_FAMILIAR_ADDRESS",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -72,11 +67,11 @@ interface FlootClaimInterface extends ethers.utils.Interface {
     values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "isClaimable",
+    functionFragment: "isAllowed",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "isExcluded",
+    functionFragment: "isClaimable",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -105,10 +100,6 @@ interface FlootClaimInterface extends ethers.utils.Interface {
     functionFragment: "FLOOT_PER_FAMILIAR",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "V1_FAMILIAR_ADDRESS",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "allowedV1", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claimed", data: BytesLike): Result;
@@ -120,11 +111,11 @@ interface FlootClaimInterface extends ethers.utils.Interface {
     functionFragment: "enableV1Claim",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "isAllowed", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isClaimable",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "isExcluded", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "multiClaim", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
@@ -199,10 +190,6 @@ export class FlootClaim extends Contract {
 
     "FLOOT_PER_FAMILIAR()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    V1_FAMILIAR_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
-
-    "V1_FAMILIAR_ADDRESS()"(overrides?: CallOverrides): Promise<[string]>;
-
     allowedV1(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -250,6 +237,16 @@ export class FlootClaim extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    isAllowed(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { allowed: boolean }>;
+
+    "isAllowed(uint256)"(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { allowed: boolean }>;
+
     isClaimable(
       _id: BigNumberish,
       overrides?: CallOverrides
@@ -259,16 +256,6 @@ export class FlootClaim extends Contract {
       _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean] & { claimable: boolean }>;
-
-    isExcluded(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean] & { isExcluded: boolean }>;
-
-    "isExcluded(uint256)"(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean] & { isExcluded: boolean }>;
 
     multiClaim(
       _ids: BigNumberish[],
@@ -315,10 +302,6 @@ export class FlootClaim extends Contract {
 
   "FLOOT_PER_FAMILIAR()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  V1_FAMILIAR_ADDRESS(overrides?: CallOverrides): Promise<string>;
-
-  "V1_FAMILIAR_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
-
   allowedV1(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   "allowedV1(uint256)"(
@@ -363,16 +346,16 @@ export class FlootClaim extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  isClaimable(_id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+  isAllowed(_id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
-  "isClaimable(uint256)"(
+  "isAllowed(uint256)"(
     _id: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isExcluded(_id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+  isClaimable(_id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
-  "isExcluded(uint256)"(
+  "isClaimable(uint256)"(
     _id: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
@@ -422,10 +405,6 @@ export class FlootClaim extends Contract {
 
     "FLOOT_PER_FAMILIAR()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    V1_FAMILIAR_ADDRESS(overrides?: CallOverrides): Promise<string>;
-
-    "V1_FAMILIAR_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
-
     allowedV1(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     "allowedV1(uint256)"(
@@ -467,16 +446,16 @@ export class FlootClaim extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    isClaimable(_id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+    isAllowed(_id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
-    "isClaimable(uint256)"(
+    "isAllowed(uint256)"(
       _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isExcluded(_id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+    isClaimable(_id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
-    "isExcluded(uint256)"(
+    "isClaimable(uint256)"(
       _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -530,10 +509,6 @@ export class FlootClaim extends Contract {
 
     "FLOOT_PER_FAMILIAR()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    V1_FAMILIAR_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "V1_FAMILIAR_ADDRESS()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     allowedV1(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -581,22 +556,19 @@ export class FlootClaim extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    isAllowed(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "isAllowed(uint256)"(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isClaimable(
       _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "isClaimable(uint256)"(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isExcluded(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "isExcluded(uint256)"(
       _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -653,14 +625,6 @@ export class FlootClaim extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    V1_FAMILIAR_ADDRESS(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "V1_FAMILIAR_ADDRESS()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     allowedV1(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -711,22 +675,22 @@ export class FlootClaim extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    isAllowed(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "isAllowed(uint256)"(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     isClaimable(
       _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "isClaimable(uint256)"(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isExcluded(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "isExcluded(uint256)"(
       _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
