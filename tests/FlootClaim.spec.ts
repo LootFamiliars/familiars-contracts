@@ -28,7 +28,7 @@ contract('FlootClaim', () => {
   let floot: ERC20TokenMock
   let ownerAddress: string
   let owners_v1: string[]
-  let owners_v2: string[]
+  let flootPerFamiliar: ethers.BigNumber
 
   beforeEach(async () => {
     // Deploy contract
@@ -38,7 +38,7 @@ contract('FlootClaim', () => {
     flootClaim = await FlootClaimArtifact.new(familiarV1.address, familiarV2.address, floot.address)
     ownerAddress = await familiarV1.owner()
     owners_v1 = Array(5).fill(ownerAddress)
-    owners_v2 = Array(6).fill(ownerAddress)
+    flootPerFamiliar = ethers.BigNumber.from(10000).mul(ethers.BigNumber.from(10).pow(18))
 
     // Mint all familiars V1 to owners
     await familiarV1.testMint(v1_ids, owners_v1)
@@ -47,7 +47,7 @@ contract('FlootClaim', () => {
     await familiarV2.airdropWithV1Familiars(v2_from_v1_ids)
 
     // Mint the V2s with ETH
-    await familiarV2.multiMint(v2_mint_ids, {value: MINT_COST.mul(v2_from_v1_ids.length)})
+    await familiarV2.multiMint(v2_mint_ids, {value: MINT_COST.mul(v2_mint_ids.length)})
 
     // Mint floot and send to floot claim contract
     await floot.mockMint(ownerAddress, ethers.BigNumber.from(FLOOT_TOTAL_SUPPLY).mul(ethers.BigNumber.from(10).pow(18)))
@@ -57,7 +57,7 @@ contract('FlootClaim', () => {
     await flootClaim.enableV1Claim(allowed_v1s)
   })
 
-  describe.only('flootClaim.isClaimable()', () => {
+  describe('flootClaim.isClaimable()', () => {
     it(`should return true if familiar has not been claimed yet`, async () => {
       v2_mint_ids.forEach(async (id) => {
         const isClaimable = await flootClaim.isClaimable(id)
@@ -96,133 +96,104 @@ contract('FlootClaim', () => {
     })
   })
 
-  // describe('familiarV2.mint()', () => {
-  //   it(`Should throw if not mint ID is out of range`, async () => {
-  //     const tx = familiarV2.mint(8001, {value: MINT_COST})
-  //     await expect(tx).to.be.rejectedWith(RevertError('Token ID invalid'))
-  //   })
+  describe('flootClaim.isAllowed()', () => {
+    it(`should return true if familiar is V2 only`, async () => {
+      v2_mint_ids.forEach(async (id) => {
+        const isAllowed = await flootClaim.isAllowed(id)
+        expect(isAllowed).to.be.true
+      })
+    })
 
-  //   it(`Should throw if not enough funds are sent`, async () => {
-  //     UNMINTED_IDS.forEach(async (id) => {
-  //       const tx = familiarV2.mint(id, {value: MINT_COST.sub(1)})
-  //       await expect(tx).to.be.rejectedWith(RevertError('Ether amount sent is insufficient'))
-  //     })
-  //   })
+    it(`should return true if V1 familiar is eligible`, async () => {
+      allowed_v1s.forEach(async (id) => {
+        const isAllowed = await flootClaim.isAllowed(id)
+        expect(isAllowed).to.be.true
+      })
+    })
 
-  //   it(`Should throw if familiar is already minted`, async () => {
-  //     UNMINTED_IDS.forEach(async (id) => {
-  //       await familiarV2.mint(id, {value: MINT_COST})
-  //     })
-  //     UNMINTED_IDS.forEach(async (id) => {
-  //       const tx = familiarV2.mint(id, {value: MINT_COST})
-  //       await expect(tx).to.be.rejectedWith(RevertError('Familiar has already been minted'))
-  //     })
-  //   })
+    it(`should return false if familiar is from excluded V1`, async () => {
+      excluded_v1s.forEach(async (id) => {
+        const isAllowed = await flootClaim.isAllowed(id)
+        expect(isAllowed).to.be.false
+      })
+    })
+  })
 
-  //   it(`Should throw if familiar is reserved for V1`, async () => {
-  //     v1_ids.forEach(async (id) => {
-  //       const tx = familiarV2.mint(id, {value: MINT_COST})
-  //       await expect(tx).to.be.rejectedWith(RevertError('Familiar is reserved for V1 familiar owner'))
-  //     })
-  //   })
+  describe('flootClaim.multiClaim()', () => {
+    it(`Should throw if not mint ID is out of range`, async () => {
+      const tx = flootClaim.multiClaim([0,8001])
+      await expect(tx).to.be.rejectedWith(RevertError('Familiar cannot claim FLOOT'))
+    })
 
-  //   it(`Should be successful otherwise`, async () => {
-  //     UNMINTED_IDS.forEach(async (id) => {
-  //       const tx = familiarV2.mint(id, {value: MINT_COST})
-  //       await expect(tx).to.be.fulfilled
+    it(`Should throw if familiar is already minted`, async () => {
+      await flootClaim.multiClaim(v2_mint_ids)
+      const tx = flootClaim.multiClaim(v2_mint_ids)
+      await expect(tx).to.be.rejectedWith(RevertError("Familiar cannot claim FLOOT"))
+    })
 
-  //       const owner = await familiarV2.ownerOf(id)
-  //       expect(owner).to.be.eql(await familiarV2.owner())
-  //     })
-  //   })
-  // })
+    it(`Should throw if familiar is from excluded V1`, async () => {
+      const tx = flootClaim.multiClaim(excluded_v1s)
+      await expect(tx).to.be.rejectedWith(RevertError('Familiar cannot claim FLOOT'))
+    })
 
-  // describe('familiarV2.multiMint()', () => {
-  //   it(`Should throw if not mint ID is out of range`, async () => {
-  //     const tx = familiarV2.multiMint([8001], {value: MINT_COST})
-  //     await expect(tx).to.be.rejectedWith(RevertError('Token ID invalid'))
-  //   })
+    it(`Should be successful otherwise`, async () => {
+      const pre_balance = await floot.balanceOf(ownerAddress)
+      const tx = flootClaim.multiClaim(allowed_v1s)
+      await expect(tx).to.be.fulfilled
 
-  //   it(`Should throw if not enough funds are sent`, async () => {
-  //     const tx = familiarV2.multiMint(UNMINTED_IDS, {value: MINT_COST.mul(UNMINTED_IDS.length).sub(1)})
-  //     await expect(tx).to.be.rejectedWith(RevertError('Ether amount sent is insufficient'))
-      
-  //     UNMINTED_IDS.forEach(async (id) => {
-  //       const tx = familiarV2.multiMint([id], {value: MINT_COST.sub(1)})
-  //       await expect(tx).to.be.rejectedWith(RevertError('Ether amount sent is insufficient'))
-  //     })
-  //   })
+      const balance = await floot.balanceOf(ownerAddress)
+      expect(balance.toString()).to.be.eql(flootPerFamiliar.mul(allowed_v1s.length).add(pre_balance.toString()).toString())
 
-  //   it(`Should throw if familiar is already minted`, async () => {
-  //     // Mint these familiar once
-  //     await familiarV2.multiMint(UNMINTED_IDS, {value: MINT_COST.mul(UNMINTED_IDS.length)})
-      
-  //     // Try to mint these familiar again
-  //     const tx = familiarV2.multiMint(UNMINTED_IDS, {value: MINT_COST.mul(UNMINTED_IDS.length)})
-  //     await expect(tx).to.be.rejectedWith(RevertError('Familiar has already been minted'))
-    
-  //     UNMINTED_IDS.forEach(async (id) => {
-  //       const tx = familiarV2.multiMint([id], {value: MINT_COST})
-  //       await expect(tx).to.be.rejectedWith(RevertError('Familiar has already been minted'))
-  //     })
-  //   })
+      const pre_balance2 = await floot.balanceOf(ownerAddress)
+      const tx2 = flootClaim.multiClaim(v2_mint_ids)
+      await expect(tx2).to.be.fulfilled
 
-  //   it(`Should throw if familiar is reserved for V1`, async () => {
-  //     // Try to mint these familiar again
-  //     const tx = familiarV2.multiMint(v1_ids, {value: MINT_COST.mul(v1_ids.length)})
-  //     await expect(tx).to.be.rejectedWith(RevertError('Familiar is reserved for V1 familiar owner'))
-      
-  //     v1_ids.forEach(async (id) => {
-  //       const tx = familiarV2.multiMint([id], {value: MINT_COST})
-  //       await expect(tx).to.be.rejectedWith(RevertError('Familiar is reserved for V1 familiar owner'))
-  //     })
-  //   })
+      const balance2 = await floot.balanceOf(ownerAddress)
+      expect(balance2.toString()).to.be.eql((flootPerFamiliar.mul(v2_mint_ids.length).add(pre_balance2.toString()).toString()))
+    })
+  })
 
-  //   it(`Should be successful otherwise`, async () => {
-  //     const tx = familiarV2.multiMint(UNMINTED_IDS, {value: MINT_COST.mul(UNMINTED_IDS.length)})
-  //     await expect(tx).to.be.fulfilled
+  describe('flootClaim.claim()', () => {
+    it(`Should throw if not mint ID is out of range`, async () => {
+      const tx = flootClaim.claim(8001)
+      await expect(tx).to.be.rejectedWith(RevertError('Familiar cannot claim FLOOT'))
+    })
 
-  //     UNMINTED_IDS.forEach(async (id) => {
-  //       const owner = await familiarV2.ownerOf(id)
-  //       expect(owner).to.be.eql(await familiarV2.owner())
-  //     })
-  //   })
-  // })
+    it(`Should throw if familiar is already minted`, async () => {
+      v2_mint_ids.forEach(async (id) => {
+        await flootClaim.claim(id)
+      })
+      v2_mint_ids.forEach(async (id) => {
+        const tx = flootClaim.claim(id)
+        await expect(tx).to.be.rejectedWith(RevertError("Familiar cannot claim FLOOT"))
+      })
+    })
 
-  // describe('familiarV2.airdropWithV1Familiars()', () => {
-  //   it(`Should be successful if not yet minted`, async () => {
-  //     // Airdrop these familiars
-  //     await familiarV2.airdropWithV1Familiars(v1_ids)
+    it(`Should throw if familiar is from excluded V1`, async () => {
+      excluded_v1s.forEach(async (id) => {
+        const tx = flootClaim.claim(id)
+        await expect(tx).to.be.rejectedWith(RevertError('Familiar cannot claim FLOOT'))
+      })
+    })
 
-  //     v1_ids.forEach(async (id, idx) => {
-  //       const owner = await familiarV2.ownerOf(id)
-  //       expect(owner).to.be.eql(v1_owners[idx])
-  //     })
-  //   })
+    it(`Should be successful otherwise`, async () => {
+      v2_from_v1_ids.forEach(async (id) => {
+        const pre_balance = await floot.balanceOf(ownerAddress)
+        const tx = flootClaim.claim(id)
+        await expect(tx).to.be.fulfilled
 
-  //   it(`Should throw if familiar is already minted`, async () => {
-  //     // Mint these familiar once
-  //     await familiarV2.airdropWithV1Familiars(v1_ids)
-      
-  //     // Try to mint these familiar again
-  //     const tx = familiarV2.airdropWithV1Familiars(v1_ids)
-  //     await expect(tx).to.be.rejectedWith(RevertError('Familiar has already been minted'))
-    
-  //     v1_ids.forEach(async (id) => {
-  //       const tx = familiarV2.airdropWithV1Familiars([id])
-  //       await expect(tx).to.be.rejectedWith(RevertError('Familiar has already been minted'))
-  //     })
-  //   })
+        const balance = await floot.balanceOf(ownerAddress)
+        expect(balance).to.be.eql(pre_balance.add(flootPerFamiliar))
+      })
 
-  //   it(`Should throw if familiar does not exist on V1`, async () => {
-  //     // Try to mint these familiar again
-  //     const tx = familiarV2.airdropWithV1Familiars(UNMINTED_IDS)
-  //     await expect(tx).to.be.rejectedWith(RevertError("ERC721: owner query for nonexistent token"))
-    
-  //     UNMINTED_IDS.forEach(async (id) => {
-  //       const tx = familiarV2.airdropWithV1Familiars([id])
-  //       await expect(tx).to.be.rejectedWith(RevertError("ERC721: owner query for nonexistent token"))
-  //     })
-  //   })
-  // })
+      v2_mint_ids.forEach(async (id) => {
+        const pre_balance = await floot.balanceOf(ownerAddress)
+        const tx = flootClaim.claim(id)
+        await expect(tx).to.be.fulfilled
+
+        const balance = await floot.balanceOf(ownerAddress)
+        expect(balance).to.be.eql(pre_balance.add(flootPerFamiliar))
+      })
+    })
+  })
 })
