@@ -12,6 +12,18 @@
     ethers "^5.0.32"
     ora "^5.3.0"
 
+"@0xsequence/erc-1155@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@0xsequence/erc-1155/-/erc-1155-3.1.0.tgz#0e3b4ccf23afee38db490c9084fa248461ebfea7"
+  integrity sha512-nJqCN0MY+hboHF74p5RXv4MR702beMDv2Wh69I8yjvUXk8XUlgy7qyKVnXUSlWIUNIGYL05yASpIeKmMNs2Z6A==
+
+"@0xsequence/erc20-meta-token@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@0xsequence/erc20-meta-token/-/erc20-meta-token-3.2.0.tgz#d0a974166957e968066c867c5efba10bcc7cfb70"
+  integrity sha512-yc0JoFutZ+5tUYjLffY9mGOyRb3w6CQeDsMDIqJrDaC/0aJEb2tUbB78r9rzi0B+ylhWqs5OSNybc7hSSQLEXQ==
+  dependencies:
+    "@0xsequence/erc-1155" "^3.1.0"
+
 "@0xsequence/utils@^0.21.5":
   version "0.21.5"
   resolved "https://registry.yarnpkg.com/@0xsequence/utils/-/utils-0.21.5.tgz#9a0343b970c4cdda1d3bc575308aa919e3b7ecda"

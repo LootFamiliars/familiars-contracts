@@ -11,7 +11,9 @@
     "ethers": "^5.0.32"
   },
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "@0xsequence/erc20-meta-token": "^3.2.0"
+  },
   "keywords": [
     "Ethereum"
   ]

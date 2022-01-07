@@ -32,7 +32,7 @@ interface LootFamiliarsInterface extends ethers.utils.Interface {
     "getApproved(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "isClaimable(uint256)": FunctionFragment;
-    "lootExpansionTokenUritokenURI(uint256)": FunctionFragment;
+    "lootExpansionTokenUri(uint256)": FunctionFragment;
     "mint(uint256)": FunctionFragment;
     "multiMint(uint256[])": FunctionFragment;
     "name()": FunctionFragment;
@@ -91,7 +91,7 @@ interface LootFamiliarsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "lootExpansionTokenUritokenURI",
+    functionFragment: "lootExpansionTokenUri",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "mint", values: [BigNumberish]): string;
@@ -193,7 +193,7 @@ interface LootFamiliarsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "lootExpansionTokenUritokenURI",
+    functionFragment: "lootExpansionTokenUri",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
@@ -400,12 +400,12 @@ export class LootFamiliars extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { claimable: boolean }>;
 
-    lootExpansionTokenUritokenURI(
+    lootExpansionTokenUri(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    "lootExpansionTokenUritokenURI(uint256)"(
+    "lootExpansionTokenUri(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
@@ -683,12 +683,12 @@ export class LootFamiliars extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  lootExpansionTokenUritokenURI(
+  lootExpansionTokenUri(
     tokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  "lootExpansionTokenUritokenURI(uint256)"(
+  "lootExpansionTokenUri(uint256)"(
     tokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
@@ -956,12 +956,12 @@ export class LootFamiliars extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    lootExpansionTokenUritokenURI(
+    lootExpansionTokenUri(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "lootExpansionTokenUritokenURI(uint256)"(
+    "lootExpansionTokenUri(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -1257,12 +1257,12 @@ export class LootFamiliars extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    lootExpansionTokenUritokenURI(
+    lootExpansionTokenUri(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "lootExpansionTokenUritokenURI(uint256)"(
+    "lootExpansionTokenUri(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1548,12 +1548,12 @@ export class LootFamiliars extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    lootExpansionTokenUritokenURI(
+    lootExpansionTokenUri(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "lootExpansionTokenUritokenURI(uint256)"(
+    "lootExpansionTokenUri(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
