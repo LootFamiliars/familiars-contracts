@@ -37,14 +37,14 @@ var _abi = [
     {
         inputs: [
             {
-                internalType: "uint256",
-                name: "amount",
-                type: "uint256"
-            },
-            {
                 internalType: "address",
                 name: "recipient",
                 type: "address"
+            },
+            {
+                internalType: "uint256",
+                name: "amount",
+                type: "uint256"
             },
         ],
         name: "transfer",
