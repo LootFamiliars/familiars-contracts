@@ -12,7 +12,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@0xsequence/erc20-meta-token": "^3.2.0"
+    "@0xsequence/erc20-meta-token": "^3.2.0",
+    "@typechain/hardhat": "^3.1.0"
   },
   "keywords": [
     "Ethereum"

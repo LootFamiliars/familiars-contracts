@@ -22,13 +22,13 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface ERC20InterfaceInterface extends ethers.utils.Interface {
   functions: {
     "balanceOf(address)": FunctionFragment;
-    "transfer(uint256,address)": FunctionFragment;
+    "transfer(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
     functionFragment: "transfer",
-    values: [BigNumberish, string]
+    values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -92,14 +92,14 @@ export class ERC20Interface extends Contract {
     ): Promise<[BigNumber] & { balance: BigNumber }>;
 
     transfer(
-      amount: BigNumberish,
       recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "transfer(uint256,address)"(
-      amount: BigNumberish,
+    "transfer(address,uint256)"(
       recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -112,14 +112,14 @@ export class ERC20Interface extends Contract {
   ): Promise<BigNumber>;
 
   transfer(
-    amount: BigNumberish,
     recipient: string,
+    amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "transfer(uint256,address)"(
-    amount: BigNumberish,
+  "transfer(address,uint256)"(
     recipient: string,
+    amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -132,14 +132,14 @@ export class ERC20Interface extends Contract {
     ): Promise<BigNumber>;
 
     transfer(
-      amount: BigNumberish,
       recipient: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "transfer(uint256,address)"(
-      amount: BigNumberish,
+    "transfer(address,uint256)"(
       recipient: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -155,14 +155,14 @@ export class ERC20Interface extends Contract {
     ): Promise<BigNumber>;
 
     transfer(
-      amount: BigNumberish,
       recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "transfer(uint256,address)"(
-      amount: BigNumberish,
+    "transfer(address,uint256)"(
       recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -179,14 +179,14 @@ export class ERC20Interface extends Contract {
     ): Promise<PopulatedTransaction>;
 
     transfer(
-      amount: BigNumberish,
       recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "transfer(uint256,address)"(
-      amount: BigNumberish,
+    "transfer(address,uint256)"(
       recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

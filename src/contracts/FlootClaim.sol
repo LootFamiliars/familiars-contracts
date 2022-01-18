@@ -328,7 +328,7 @@ interface ERC721Interface {
 
 interface ERC20Interface {
   function balanceOf(address owner) external view returns (uint256 balance);
-  function transfer(uint256 amount, address recipient) external returns (bool);
+  function transfer(address recipient, uint256 amount) external returns (bool);
 }
 
 
@@ -342,6 +342,12 @@ contract FlootClaim is Ownable {
 
     // Amount of FLOOT each familiar can claim
     uint256 constant public FLOOT_PER_FAMILIAR = 10000 * 10**18; // 10k FLOOT per familiar
+
+    // When FLOOTs will be withdrawable by owner
+    // This is to ensure that FLOOTs aren't forever locked in this contract,
+    // which could prevent buyouts on Fractional art, but could also prevent
+    // all ETH from being distributed to FLOOT owners in case of a buyout.
+    uint256 public immutable UNLOCK_TIME; // 1 year after deployment
 
     // Familiar contracts
     address public immutable FAMILIAR_ADDRESS;
@@ -364,6 +370,9 @@ contract FlootClaim is Ownable {
 
       FLOOT_ADDRESS = _flootAddress;
       flootContract = ERC20Interface(_flootAddress);
+
+      // Owner can withdraw remaining FLOOTs 1 year after contract creation
+      UNLOCK_TIME = block.timestamp + 365 days;
     }
 
     // Sets a V2 familiar minted from V1 as being eligible
@@ -412,16 +421,28 @@ contract FlootClaim is Ownable {
       // ID must be within valid range
       if (_id == 0 || _id > 8000) { return false; }
 
-      // If v1 exists but is not allowed, return false, else return true
+      // Verify whether the V1 familiar exists for this ID
       try v1FamiliarContract.ownerOf(_id) {
         if (!allowedV1[_id]) {
+          // V1 exists but is not allowed
           return false;
         }
+        // V1 exists and is allowed
         return true;
 
       } catch {
         // V1 familiar does not exist, so familiar must be allowed
         return true;
       }
+    }
+
+    // Allow owner of this contract to withdraw FLOOT 1 year after deployment
+    // This is to ensure that FLOOTs aren't forever locked in this contract,
+    // which could prevent buyouts on Fractional art, but could also prevent
+    // all ETH from being distributed to FLOOT owners in case of a buyout.
+    function withdrawFloot() external onlyOwner {
+      require(block.timestamp >= UNLOCK_TIME, "Cannot withdraw FLOOT yet");
+      uint256 balance = flootContract.balanceOf(address(this));
+      flootContract.transfer(owner(), balance);
     }
 }

@@ -24,6 +24,7 @@ interface FlootClaimInterface extends ethers.utils.Interface {
     "FAMILIAR_ADDRESS()": FunctionFragment;
     "FLOOT_ADDRESS()": FunctionFragment;
     "FLOOT_PER_FAMILIAR()": FunctionFragment;
+    "UNLOCK_TIME()": FunctionFragment;
     "allowedV1(uint256)": FunctionFragment;
     "claim(uint256)": FunctionFragment;
     "claimed(uint256)": FunctionFragment;
@@ -35,6 +36,7 @@ interface FlootClaimInterface extends ethers.utils.Interface {
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "withdrawFloot()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -47,6 +49,10 @@ interface FlootClaimInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "FLOOT_PER_FAMILIAR",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "UNLOCK_TIME",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -87,6 +93,10 @@ interface FlootClaimInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawFloot",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "FAMILIAR_ADDRESS",
@@ -98,6 +108,10 @@ interface FlootClaimInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "FLOOT_PER_FAMILIAR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "UNLOCK_TIME",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "allowedV1", data: BytesLike): Result;
@@ -124,6 +138,10 @@ interface FlootClaimInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawFloot",
     data: BytesLike
   ): Result;
 
@@ -189,6 +207,10 @@ export class FlootClaim extends Contract {
     FLOOT_PER_FAMILIAR(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "FLOOT_PER_FAMILIAR()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    UNLOCK_TIME(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "UNLOCK_TIME()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     allowedV1(
       arg0: BigNumberish,
@@ -288,6 +310,14 @@ export class FlootClaim extends Contract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    withdrawFloot(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "withdrawFloot()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   FAMILIAR_ADDRESS(overrides?: CallOverrides): Promise<string>;
@@ -301,6 +331,10 @@ export class FlootClaim extends Contract {
   FLOOT_PER_FAMILIAR(overrides?: CallOverrides): Promise<BigNumber>;
 
   "FLOOT_PER_FAMILIAR()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  UNLOCK_TIME(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "UNLOCK_TIME()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   allowedV1(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
@@ -392,6 +426,14 @@ export class FlootClaim extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  withdrawFloot(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "withdrawFloot()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     FAMILIAR_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
@@ -404,6 +446,10 @@ export class FlootClaim extends Contract {
     FLOOT_PER_FAMILIAR(overrides?: CallOverrides): Promise<BigNumber>;
 
     "FLOOT_PER_FAMILIAR()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    UNLOCK_TIME(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "UNLOCK_TIME()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowedV1(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
@@ -484,6 +530,10 @@ export class FlootClaim extends Contract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    withdrawFloot(overrides?: CallOverrides): Promise<void>;
+
+    "withdrawFloot()"(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -508,6 +558,10 @@ export class FlootClaim extends Contract {
     FLOOT_PER_FAMILIAR(overrides?: CallOverrides): Promise<BigNumber>;
 
     "FLOOT_PER_FAMILIAR()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    UNLOCK_TIME(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "UNLOCK_TIME()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowedV1(
       arg0: BigNumberish,
@@ -604,6 +658,14 @@ export class FlootClaim extends Contract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    withdrawFloot(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "withdrawFloot()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -624,6 +686,10 @@ export class FlootClaim extends Contract {
     "FLOOT_PER_FAMILIAR()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    UNLOCK_TIME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "UNLOCK_TIME()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     allowedV1(
       arg0: BigNumberish,
@@ -724,6 +790,14 @@ export class FlootClaim extends Contract {
 
     "transferOwnership(address)"(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawFloot(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "withdrawFloot()"(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
