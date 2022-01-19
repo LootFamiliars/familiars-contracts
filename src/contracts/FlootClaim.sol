@@ -92,33 +92,35 @@ contract FlootClaim is Ownable {
     // Amount of FLOOT each familiar can claim
     uint256 constant public FLOOT_PER_FAMILIAR = 10000 * 10**18; // 10k FLOOT per familiar
 
+    // Familiar contracts
+    ERC721Interface immutable v1FamiliarContract; // V1 familiars
+    ERC721Interface immutable familiarContract;   // Real familiars
+    address public immutable FAMILIAR_ADDRESS;
+
+    // FLOOT contract
+    ERC20Interface immutable flootContract;
+    address public immutable FLOOT_ADDRESS;
+
     // When FLOOTs will be withdrawable by owner
     // This is to ensure that FLOOTs aren't forever locked in this contract,
     // which could prevent buyouts on Fractional art, but could also prevent
     // all ETH from being distributed to FLOOT owners in case of a buyout.
-    uint256 public immutable UNLOCK_TIME; // 1 year after deployment
-
-    // Familiar contracts
-    address public immutable FAMILIAR_ADDRESS;
-    ERC721Interface immutable familiarContract;   // Real familiars
-    ERC721Interface immutable v1FamiliarContract; // V1 familiars
-
-    // FLOOT contract
-    address public immutable FLOOT_ADDRESS;
-    ERC20Interface immutable flootContract;
+    uint256 public immutable UNLOCK_TIME;
 
     // Tracks which familiar has claimed their FLOOT
     mapping (uint256 => bool) public claimed;
     mapping (uint256 => bool) public allowedV1;
  
-    // Store Familiar and FLOOT contracts
+    // Store contract addresses and register unlock time to be in 1 year
     constructor(address _v1FamiliarAddress, address _familiarAddress,  address _flootAddress) {
-      FAMILIAR_ADDRESS = _familiarAddress;
-      familiarContract = ERC721Interface(_familiarAddress);
+      // Familiar contracts
       v1FamiliarContract = ERC721Interface(_v1FamiliarAddress);
+      familiarContract = ERC721Interface(_familiarAddress);
+      FAMILIAR_ADDRESS = _familiarAddress;
 
-      FLOOT_ADDRESS = _flootAddress;
+      // Floot contract
       flootContract = ERC20Interface(_flootAddress);
+      FLOOT_ADDRESS = _flootAddress;
 
       // Owner can withdraw remaining FLOOTs 1 year after contract creation
       UNLOCK_TIME = block.timestamp + 365 days;
@@ -162,7 +164,7 @@ contract FlootClaim is Ownable {
 
     // Check if you can claim a given familiar
     function isClaimable(uint256 _id) public view returns (bool claimable) {
-      return !claimed[_id] && isAllowed(_id) ? true : false;
+      return !claimed[_id] && isAllowed(_id);
     }
 
     // Check if a familiar is not eligible for claiming FLOOT
